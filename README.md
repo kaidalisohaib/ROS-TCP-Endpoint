@@ -8,6 +8,29 @@
 
 Instructions and examples on how to use this ROS package can be found on the [Unity Robotics Hub](https://github.com/Unity-Technologies/Unity-Robotics-Hub/blob/master/tutorials/ros_unity_integration/README.md) repository.
 
+## Installation
+
+Clone this repository into your ROS 2 workspace `src` folder, and ensure you checkout the `main-ros2-optimized` branch:
+
+```bash
+# Source your ROS 2 installation (replace <distro> with your ROS 2 version, e.g. humble, foxy)
+source /opt/ros/<distro>/setup.bash
+
+# Create a workspace if you don't already have one
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+
+# Clone the optimized branch of the endpoint
+git clone -b main-ros2-optimized https://github.com/kaidalisohaib/ROS-TCP-Endpoint.git
+
+# Navigate to the workspace root and build
+cd ~/ros2_ws
+colcon build --symlink-install
+
+# Source the newly built workspace
+source install/setup.bash
+```
+
 ## Community and Feedback
 
 The Unity Robotics projects are open-source and we encourage and welcome contributions.

@@ -14,6 +14,7 @@
 
 import rclpy
 import re
+import threading
 
 from rclpy.serialization import deserialize_message
 
@@ -62,17 +63,15 @@ class RosService(RosSender):
 
         self.future = self.cli.call_async(message)
 
-        while rclpy.ok():
-            if self.future.done():
-                try:
-                    response = self.future.result()
-                    return response
-                except Exception as e:
-                    self.get_logger().info(f"Service call failed {e}")
+        done_event = threading.Event()
+        self.future.add_done_callback(lambda _: done_event.set())
+        done_event.wait()  # blocks without spinning, zero CPU, yields GIL
 
-                break
-
-        return None
+        try:
+            return self.future.result()
+        except Exception as e:
+            self.get_logger().info(f"Service call failed {e}")
+            return None
 
     def unregister(self):
         """

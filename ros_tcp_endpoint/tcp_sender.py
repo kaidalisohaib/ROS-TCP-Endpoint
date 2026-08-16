@@ -17,6 +17,7 @@ import socket
 import time
 import threading
 import json
+import struct
 
 from rclpy.node import Node
 from rclpy.serialization import deserialize_message
@@ -86,8 +87,16 @@ class UnityTcpSender:
 
     def send_unity_message(self, topic, message):
         if self.queue is not None:
-            serialized_message = ClientThread.serialize_message(topic, message)
-            self.queue.put(serialized_message)
+            if isinstance(message, bytes):
+                # Already serialized (from raw subscriber), pack directly
+                dest_bytes = topic.encode("utf-8")
+                length = len(dest_bytes)
+                dest_info = struct.pack("<I%ss" % length, length, dest_bytes)
+                msg_length = struct.pack("<I", len(message))
+                self.queue.put(dest_info + msg_length + message)
+            else:
+                serialized_message = ClientThread.serialize_message(topic, message)
+                self.queue.put(serialized_message)
 
     def send_unity_service_request(self, topic, service_class, request):
         if self.queue is None:

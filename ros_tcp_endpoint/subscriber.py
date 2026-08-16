@@ -47,7 +47,7 @@ class RosSubscriber(RosReceiver):
 
         # Start Subscriber listener function
         self.subscription = self.create_subscription(
-            self.msg, self.topic, self.send, qos_profile  # queue_size
+            self.msg, self.topic, self.send, qos_profile, raw=True
         )
         self.subscription
 

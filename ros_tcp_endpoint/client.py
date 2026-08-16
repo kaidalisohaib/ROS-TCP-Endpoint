@@ -58,7 +58,7 @@ class ClientThread(threading.Thread):
             if not read:
                 raise IOError("No more data available")
             pos += read
-        return bytes(buffer)
+        return buffer
 
     @staticmethod
     def read_int32(conn):

@@ -36,8 +36,7 @@ class TcpServer(Node):
     """
     Initializes ROS node and TCP server.
     """
-
-    def __init__(self, node_name, buffer_size=1024, connections=10, tcp_ip=None, tcp_port=None):
+    def __init__(self, node_name, buffer_size=4194304, connections=10, tcp_ip=None, tcp_port=None):
         """
         Initializes ROS node and class variables.
 
@@ -101,6 +100,9 @@ class TcpServer(Node):
 
             try:
                 (conn, (ip, port)) = tcp_server.accept()
+                conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                conn.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.buffer_size)
+                conn.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.buffer_size)
                 ClientThread(conn, self, ip, port).start()
             except socket.timeout as err:
                 self.logerr("ros_tcp_endpoint.TcpServer: socket timeout")

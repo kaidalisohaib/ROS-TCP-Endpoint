@@ -16,12 +16,20 @@ Added Sonarqube scanner
 
 ### Changed
 
+- **Performance**: Disabled Nagle's algorithm (`TCP_NODELAY = 1`) on accepted sockets for lower latency.
+- **Performance**: Passed `buffer_size` (now defaults to `65536`) to `SO_RCVBUF` and `SO_SNDBUF`.
+- **Performance**: Changed subscription initialization to use `raw=True` for zero-copy receipt of ROS 2 messages.
+- **Performance**: Updated TCP send path to support zero-copy routing of raw bytes (avoiding re-serialization).
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
 
+- **Performance/Bug**: Replaced busy-waiting with a 100% CPU usage loop in `service.py` with an event-driven `threading.Event` mechanism.
+- **Performance**: Fixed an unnecessary buffer allocation copy in `client.py`'s `recvall` by returning the `bytearray` directly.
+- **Cleanup**: Removed a meaningless return value in the subscriber callback.
 
 ## [0.7.0] - 2022-02-01
 
